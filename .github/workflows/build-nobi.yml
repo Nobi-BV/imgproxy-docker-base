@@ -7,7 +7,9 @@ on:
       - '*nobi*'
 
 env:
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
+  # github.repository may contain uppercase (e.g. Nobi-BV/...), but Docker
+  # references must be lowercase. Each job lowercases it into REGISTRY_IMAGE
+  # via the "Prepare image name" step below.
   DOCKER_META_TAGS: |
     type=ref,event=tag
     type=sha,enable=${{ github.event_name == 'workflow_dispatch' }}
@@ -29,6 +31,9 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: Prepare image name (lowercase)
+        run: echo "REGISTRY_IMAGE=ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd # v4.0.0
@@ -82,6 +87,9 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: Prepare image name (lowercase)
+        run: echo "REGISTRY_IMAGE=ghcr.io/$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_ENV"
+
       - name: Download digests
         uses: actions/download-artifact@v4
         with:
