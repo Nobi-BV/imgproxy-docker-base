@@ -1,7 +1,9 @@
 # Use Debian Bullseye as a base image to link against glibc 2.31.
 FROM public.ecr.aws/debian/debian:bullseye-slim AS base
 
-RUN apt-get update \
+# bullseye-security moved to archive.debian.org after Debian 11 LTS ended
+RUN sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|' /etc/apt/sources.list \
+  && apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     bash \
     curl \
@@ -65,7 +67,9 @@ RUN ./install-go.sh
 FROM public.ecr.aws/debian/debian:bullseye-slim AS final
 LABEL maintainer="Sergey Alexandrovich <darthsim@gmail.com>"
 
-RUN apt-get update \
+# bullseye-security moved to archive.debian.org after Debian 11 LTS ended
+RUN sed -i 's|http://deb.debian.org/debian-security|http://archive.debian.org/debian-security|' /etc/apt/sources.list \
+  && apt-get update \
   && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     bash \
     curl \
