@@ -41,6 +41,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     python3-venv \
     gettext \
     gperf \
+    help2man \
   && ./install-rust.sh \
   && python3 -m venv /root/.python \
   && /root/.python/bin/pip install meson ninja packaging
